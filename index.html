@@ -1,657 +1,450 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPIRITS JOURNAL</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      background: #0a0a0a;
-      min-height: 100vh;
-      padding: 20px;
-      color: #fff;
-    }
-    
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: #1a1a1a;
-      border-radius: 2px;
-      padding: 40px 30px;
-      border: 1px solid #333;
-    }
-    
-    h1 {
-      color: #fff;
-      margin-bottom: 40px;
-      text-align: center;
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: 8px;
-      text-transform: uppercase;
-    }
-    
-    .form-group {
-      margin-bottom: 30px;
-    }
-    
-    label {
-      display: block;
-      margin-bottom: 12px;
-      color: #999;
-      font-weight: 400;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-    
-    input[type="text"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 15px;
-      border: 1px solid #333;
-      background: #0a0a0a;
-      color: #fff;
-      border-radius: 0;
-      font-size: 16px;
-      transition: border-color 0.3s;
-      font-family: inherit;
-    }
-    
-    select {
-      cursor: pointer;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 15px center;
-      padding-right: 40px;
-    }
-    
-    select option {
-      background: #1a1a1a;
-      color: #fff;
-    }
-    
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: #666;
-    }
-    
-    textarea {
-      resize: vertical;
-      min-height: 120px;
-    }
-    
-    .photo-upload {
-      border: 2px dashed #333;
-      border-radius: 0;
-      padding: 40px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      background: #0a0a0a;
-    }
-    
-    .photo-upload:hover {
-      border-color: #666;
-    }
-    
-    .photo-upload.has-image {
-      padding: 0;
-      border: 1px solid #333;
-    }
-    
-    #preview {
-      max-width: 100%;
-      display: none;
-      filter: grayscale(100%) contrast(1.1);
-    }
-    
-    #preview.show {
-      display: block;
-    }
-    
-    .upload-text {
-      color: #666;
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-    
-    .rating-container {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    
-    .rating-btn {
-      width: 50px;
-      height: 50px;
-      border: 1px solid #333;
-      background: #0a0a0a;
-      color: #666;
-      border-radius: 0;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 300;
-      transition: all 0.2s;
-    }
-    
-    .rating-btn:hover {
-      border-color: #fff;
-      color: #fff;
-    }
-    
-    .rating-btn.selected {
-      background: #fff;
-      color: #0a0a0a;
-      border-color: #fff;
-    }
-    
-    .btn {
-      width: 100%;
-      padding: 18px;
-      border: 1px solid #333;
-      border-radius: 0;
-      font-size: 12px;
-      font-weight: 400;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-    
-    .btn-primary {
-      background: #fff;
-      color: #0a0a0a;
-      border-color: #fff;
-    }
-    
-    .btn-primary:hover {
-      background: #0a0a0a;
-      color: #fff;
-    }
-    
-    .btn-secondary {
-      background: transparent;
-      color: #666;
-      border-color: #333;
-    }
-    
-    .btn-secondary:hover {
-      color: #fff;
-      border-color: #666;
-    }
-    
-    .records {
-      margin-top: 60px;
-    }
-    
-    .records-header {
-      margin-bottom: 30px;
-    }
-    
-    .records h2 {
-      color: #fff;
-      font-size: 18px;
-      font-weight: 300;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-    
-    .filter-section {
-      margin-bottom: 20px;
-    }
-    
-    .filter-label {
-      color: #999;
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    
-    .filter-container {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-      padding: 8px 16px;
-      border: 1px solid #333;
-      background: transparent;
-      color: #666;
-      border-radius: 0;
-      cursor: pointer;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      transition: all 0.3s;
-    }
-    
-    .filter-btn:hover {
-      border-color: #666;
-      color: #fff;
-    }
-    
-    .filter-btn.active {
-      background: #fff;
-      color: #0a0a0a;
-      border-color: #fff;
-    }
-    
-    .record-card {
-      background: #0a0a0a;
-      border: 1px solid #333;
-      border-radius: 0;
-      padding: 25px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 25px;
-      transition: border-color 0.3s;
-    }
-    
-    .record-card:hover {
-      border-color: #666;
-    }
-    
-    .record-image {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      flex-shrink: 0;
-      filter: grayscale(100%) contrast(1.1);
-    }
-    
-    .record-info {
-      flex: 1;
-    }
-    
-    .record-category {
-      display: inline-block;
-      padding: 4px 12px;
-      border: 1px solid #333;
-      color: #999;
-      font-size: 9px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    
-    .record-name {
-      font-size: 20px;
-      font-weight: 400;
-      color: #fff;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
-    }
-    
-    .record-rating {
-      color: #999;
-      font-size: 14px;
-      font-weight: 300;
-      margin-bottom: 12px;
-      letter-spacing: 2px;
-    }
-    
-    .record-tasting {
-      color: #666;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
-    
-    .record-date {
-      color: #555;
-      font-size: 10px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    
-    .delete-btn {
-      background: transparent;
-      color: #666;
-      border: 1px solid #333;
-      padding: 8px 20px;
-      border-radius: 0;
-      cursor: pointer;
-      font-size: 10px;
-      margin-top: 15px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      transition: all 0.3s;
-    }
-    
-    .delete-btn:hover {
-      background: #fff;
-      color: #0a0a0a;
-      border-color: #fff;
-    }
-    
-    .no-records {
-      text-align: center;
-      color: #555;
-      padding: 60px;
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ウイスキー記録</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .backup-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .backup-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .export-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .export-btn:active {
+            background: #45a049;
+        }
+        
+        .import-btn {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .import-btn:active {
+            background: #0b7dda;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .rating-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        .star {
+            font-size: 32px;
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        
+        .star.active {
+            color: #ffd700;
+        }
+        
+        .photo-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .photo-upload:hover {
+            border-color: #2a5298;
+            background: #f5f5f5;
+        }
+        
+        .photo-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .whiskey-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .whiskey-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .whiskey-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .whiskey-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+        
+        .whiskey-price {
+            font-size: 16px;
+            color: #4CAF50;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .whiskey-rating {
+            color: #ffd700;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .whiskey-notes {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .whiskey-photo {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .delete-btn:active {
+            background: #da190b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+        
+        .empty-state p {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        
+        #photoInput {
+            display: none;
+        }
+        
+        #importInput {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>SPIRITS JOURNAL</h1>
-    
-    <form id="recordForm">
-      <div class="form-group">
-        <label>Photography</label>
-        <div class="photo-upload" id="photoUpload">
-          <input type="file" id="photoInput" accept="image/*" style="display: none;">
-          <img id="preview" alt="Preview">
-          <div class="upload-text" id="uploadText">+ Add Image</div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Category</label>
-        <select id="category" required>
-          <option value="">Select category</option>
-          <option value="beer">Beer</option>
-          <option value="sake">Sake</option>
-          <option value="wine">Wine</option>
-          <option value="shochu">Shochu</option>
-          <option value="whiskey">Whiskey</option>
-          <option value="gin">Gin</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="sakeName" placeholder="Enter spirit name" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Rating</label>
-        <div class="rating-container" id="ratingContainer">
-          <!-- JavaScriptで生成 -->
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Tasting Notes</label>
-        <textarea id="tasting" placeholder="Aroma, flavor, finish..."></textarea>
-      </div>
-      
-      <button type="submit" class="btn btn-primary">Save Entry</button>
-      <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
-    </form>
-    
-    <div class="records">
-      <div class="records-header">
-        <h2>Archive</h2>
-        
-        <div class="filter-section">
-          <div class="filter-label">Category</div>
-          <div class="filter-container" id="categoryFilterContainer">
-            <button class="filter-btn active" data-category="all">All</button>
-            <button class="filter-btn" data-category="beer">Beer</button>
-            <button class="filter-btn" data-category="sake">Sake</button>
-            <button class="filter-btn" data-category="wine">Wine</button>
-            <button class="filter-btn" data-category="shochu">Shochu</button>
-            <button class="filter-btn" data-category="whiskey">Whiskey</button>
-            <button class="filter-btn" data-category="gin">Gin</button>
-          </div>
+    <div class="container">
+        <div class="header">
+            <h1>🥃 ウイスキー記録</h1>
+            <p>あなただけのテイスティングノート</p>
         </div>
         
-        <div class="filter-section">
-          <div class="filter-label">Rating</div>
-          <div class="filter-container" id="ratingFilterContainer">
-            <button class="filter-btn active" data-rating="all">All</button>
-            <button class="filter-btn" data-rating="9-10">9-10</button>
-            <button class="filter-btn" data-rating="7-8">7-8</button>
-            <button class="filter-btn" data-rating="5-6">5-6</button>
-            <button class="filter-btn" data-rating="1-4">1-4</button>
-          </div>
+        <div class="backup-buttons">
+            <button class="backup-btn export-btn" onclick="exportData()">📥 バックアップ</button>
+            <button class="backup-btn import-btn" onclick="document.getElementById('importInput').click()">📤 復元</button>
+            <input type="file" id="importInput" accept=".json" onchange="importData(event)">
         </div>
-      </div>
-      
-      <div id="recordsList"></div>
+        
+        <div class="card">
+            <form id="whiskeyForm">
+                <div class="form-group">
+                    <label for="name">ウイスキー名</label>
+                    <input type="text" id="name" placeholder="例：山崎12年" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">価格（円）</label>
+                    <input type="number" id="price" placeholder="例：8000" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label>評価</label>
+                    <div class="rating-group" id="rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">テイスティングノート</label>
+                    <textarea id="notes" placeholder="香り、味わい、余韻など..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>写真</label>
+                    <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                        <p>📷 タップして写真を追加</p>
+                        <img id="photoPreview" class="photo-preview" style="display:none;">
+                    </div>
+                    <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(event)">
+                </div>
+                
+                <button type="submit" class="submit-btn">記録する</button>
+            </form>
+        </div>
+        
+        <div id="whiskeyList" class="whiskey-list"></div>
     </div>
-  </div>
-  
-  <script>
-    let db;
-    let selectedRating = 0;
-    let currentPhotoData = null;
-    let currentCategoryFilter = 'all';
-    let currentRatingFilter = 'all';
     
-    // IndexedDBの初期化
-    const initDB = () => {
-      const request = indexedDB.open('SakeRecordDB', 2);
-      
-      request.onerror = () => {
-        alert('Database initialization failed');
-      };
-      
-      request.onsuccess = (event) => {
-        db = event.target.result;
-        loadRecords();
-      };
-      
-      request.onupgradeneeded = (event) => {
-        db = event.target.result;
-        if (!db.objectStoreNames.contains('records')) {
-          const objectStore = db.createObjectStore('records', { keyPath: 'id', autoIncrement: true });
-          objectStore.createIndex('date', 'date', { unique: false });
-          objectStore.createIndex('category', 'category', { unique: false });
-        } else {
-          const objectStore = event.currentTarget.transaction.objectStore('records');
-          if (!objectStore.indexNames.contains('category')) {
-            objectStore.createIndex('category', 'category', { unique: false });
-          }
-        }
-      };
-    };
-    
-    // 評価ボタンの生成
-    const ratingContainer = document.getElementById('ratingContainer');
-    for (let i = 1; i <= 10; i++) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'rating-btn';
-      btn.textContent = i;
-      btn.onclick = () => selectRating(i);
-      ratingContainer.appendChild(btn);
-    }
-    
-    const selectRating = (rating) => {
-      selectedRating = rating;
-      document.querySelectorAll('.rating-btn').forEach((btn, index) => {
-        if (index + 1 === rating) {
-          btn.classList.add('selected');
-        } else {
-          btn.classList.remove('selected');
-        }
-      });
-    };
-    
-    // カテゴリーフィルターボタンのイベント
-    document.querySelectorAll('#categoryFilterContainer .filter-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('#categoryFilterContainer .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentCategoryFilter = btn.dataset.category;
-        loadRecords();
-      };
-    });
-    
-    // 評価フィルターボタンのイベント
-    document.querySelectorAll('#ratingFilterContainer .filter-btn').forEach(btn => {
-      btn.onclick = () => {
-        document.querySelectorAll('#ratingFilterContainer .filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentRatingFilter = btn.dataset.rating;
-        loadRecords();
-      };
-    });
-    
-    // 写真アップロード
-    const photoUpload = document.getElementById('photoUpload');
-    const photoInput = document.getElementById('photoInput');
-    const preview = document.getElementById('preview');
-    const uploadText = document.getElementById('uploadText');
-    
-    photoUpload.onclick = () => photoInput.click();
-    
-    photoInput.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          currentPhotoData = event.target.result;
-          preview.src = currentPhotoData;
-          preview.classList.add('show');
-          uploadText.style.display = 'none';
-          photoUpload.classList.add('has-image');
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    
-    // フォーム送信
-    document.getElementById('recordForm').onsubmit = (e) => {
-      e.preventDefault();
-      
-      if (selectedRating === 0) {
-        alert('Please select a rating');
-        return;
-      }
-      
-      const record = {
-        photo: currentPhotoData,
-        category: document.getElementById('category').value,
-        name: document.getElementById('sakeName').value,
-        rating: selectedRating,
-        tasting: document.getElementById('tasting').value,
-        date: new Date().toISOString()
-      };
-      
-      const transaction = db.transaction(['records'], 'readwrite');
-      const objectStore = transaction.objectStore('records');
-      const request = objectStore.add(record);
-      
-      request.onsuccess = () => {
-        alert('Entry saved successfully');
-        clearForm();
-        loadRecords();
-      };
-      
-      request.onerror = () => {
-        alert('Failed to save entry');
-      };
-    };
-    
-    // フォームクリア
-    const clearForm = () => {
-      document.getElementById('recordForm').reset();
-      preview.classList.remove('show');
-      uploadText.style.display = 'block';
-      photoUpload.classList.remove('has-image');
-      currentPhotoData = null;
-      selectedRating = 0;
-      document.querySelectorAll('.rating-btn').forEach(btn => {
-        btn.classList.remove('selected');
-      });
-    };
-    
-    document.getElementById('clearBtn').onclick = clearForm;
-    
-    // 評価範囲チェック関数
-    const isInRatingRange = (rating, range) => {
-      if (range === 'all') return true;
-      if (range === '9-10') return rating >= 9 && rating <= 10;
-      if (range === '7-8') return rating >= 7 && rating <= 8;
-      if (range === '5-6') return rating >= 5 && rating <= 6;
-      if (range === '1-4') return rating >= 1 && rating <= 4;
-      return true;
-    };
-    
-    // 記録の読み込み
-    const loadRecords = () => {
-      const transaction = db.transaction(['records'], 'readonly');
-      const objectStore = transaction.objectStore('records');
-      const request = objectStore.getAll();
-      
-      request.onsuccess = (event) => {
-        let records = event.target.result.reverse();
+    <script>
+        let selectedRating = 0;
+        let selectedPhoto = null;
+        let whiskeys = JSON.parse(localStorage.getItem('whiskeys')) || [];
         
-        // カテゴリーフィルター適用
-        if (currentCategoryFilter !== 'all') {
-          records = records.filter(record => record.category === currentCategoryFilter);
+        // 星評価
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.dataset.rating);
+                updateStars();
+            });
+        });
+        
+        function updateStars() {
+            document.querySelectorAll('.star').forEach(star => {
+                const rating = parseInt(star.dataset.rating);
+                star.classList.toggle('active', rating <= selectedRating);
+            });
         }
         
-        // 評価フィルター適用
-        if (currentRatingFilter !== 'all') {
-          records = records.filter(record => isInRatingRange(record.rating, currentRatingFilter));
+        // 写真プレビュー
+        function previewPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedPhoto = e.target.result;
+                    const preview = document.getElementById('photoPreview');
+                    preview.src = selectedPhoto;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
         }
         
-        displayRecords(records);
-      };
-    };
-    
-    // 記録の表示
-    const displayRecords = (records) => {
-      const recordsList = document.getElementById('recordsList');
-      
-      if (records.length === 0) {
-        recordsList.innerHTML = '<div class="no-records">No entries yet</div>';
-        return;
-      }
-      
-      recordsList.innerHTML = records.map(record => `
-        <div class="record-card">
-          ${record.photo ? `<img src="${record.photo}" class="record-image" alt="${record.name}">` : ''}
-          <div class="record-info">
-            <div class="record-category">${record.category || 'Uncategorized'}</div>
-            <div class="record-name">${record.name}</div>
-            <div class="record-rating">RATING: ${record.rating} / 10</div>
-            <div class="record-tasting">${record.tasting || 'No notes'}</div>
-            <div class="record-date">${new Date(record.date).toLocaleString('ja-JP')}</div>
-            <button class="delete-btn" onclick="deleteRecord(${record.id})">Delete</button>
-          </div>
-        </div>
-      `).join('');
-    };
-    
-    // 記録の削除
-    window.deleteRecord = (id) => {
-      if (!confirm('Delete this entry?')) return;
-      
-      const transaction = db.transaction(['records'], 'readwrite');
-      const objectStore = transaction.objectStore('records');
-      const request = objectStore.delete(id);
-      
-      request.onsuccess = () => {
-        loadRecords();
-      };
-    };
-    
-    // 初期化
-    initDB();
-  </script>
+        // フォーム送信
+        document.getElementById('whiskeyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const whiskey = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                price: document.getElementById('price').value,
+                rating: selectedRating,
+                notes: document.getElementById('notes').value,
+                photo: selectedPhoto,
+                date: new Date().toLocaleDateString('ja-JP')
+            };
+            
+            whiskeys.unshift(whiskey);
+            localStorage.setItem('whiskeys', JSON.stringify(whiskeys));
+            
+            // リセット
+            this.reset();
+            selectedRating = 0;
+            selectedPhoto = null;
+            updateStars();
+            document.getElementById('photoPreview').style.display = 'none';
+            
+            displayWhiskeys();
+        });
+        
+        // 表示
+        function displayWhiskeys() {
+            const list = document.getElementById('whiskeyList');
+            
+            if (whiskeys.length === 0) {
+                list.innerHTML = '<div class="empty-state"><p>まだ記録がありません<br>最初のウイスキーを記録しましょう！</p></div>';
+                return;
+            }
+            
+            list.innerHTML = whiskeys.map(w => `
+                <div class="whiskey-item">
+                    <div class="whiskey-header">
+                        <div class="whiskey-name">${w.name}</div>
+                        ${w.price ? `<div class="whiskey-price">¥${parseInt(w.price).toLocaleString()}</div>` : ''}
+                    </div>
+                    <div class="whiskey-rating">${'★'.repeat(w.rating)}${'☆'.repeat(5-w.rating)}</div>
+                    ${w.notes ? `<div class="whiskey-notes">${w.notes}</div>` : ''}
+                    ${w.photo ? `<img src="${w.photo}" class="whiskey-photo">` : ''}
+                    <div style="color: #999; font-size: 12px; margin-top: 10px;">${w.date}</div>
+                    <button class="delete-btn" onclick="deleteWhiskey(${w.id})">削除</button>
+                </div>
+            `).join('');
+        }
+        
+        // 削除
+        function deleteWhiskey(id) {
+            if (confirm('この記録を削除しますか？')) {
+                whiskeys = whiskeys.filter(w => w.id !== id);
+                localStorage.setItem('whiskeys', JSON.stringify(whiskeys));
+                displayWhiskeys();
+            }
+        }
+        
+        // エクスポート
+        function exportData() {
+            const dataStr = JSON.stringify(whiskeys, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `whiskey-backup-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            alert('バックアップファイルをダウンロードしました！');
+        }
+        
+        // インポート
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (confirm('現在のデータに追加しますか？（キャンセルで上書き）')) {
+                        whiskeys = [...whiskeys, ...importedData];
+                    } else {
+                        whiskeys = importedData;
+                    }
+                    localStorage.setItem('whiskeys', JSON.stringify(whiskeys));
+                    displayWhiskeys();
+                    alert('データを復元しました！');
+                } catch (error) {
+                    alert('ファイルの読み込みに失敗しました');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        // 初期表示
+        displayWhiskeys();
+    </script>
 </body>
 </html>
