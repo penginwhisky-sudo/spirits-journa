@@ -24,18 +24,70 @@
       margin: 0 auto;
       background: #1a1a1a;
       border-radius: 2px;
-      padding: 40px 30px;
       border: 1px solid #333;
     }
     
     h1 {
       color: #fff;
-      margin-bottom: 40px;
+      padding: 40px 30px 30px;
       text-align: center;
       font-size: 32px;
       font-weight: 300;
       letter-spacing: 8px;
       text-transform: uppercase;
+    }
+    
+    /* タブナビゲーション */
+    .tab-navigation {
+      display: flex;
+      border-bottom: 1px solid #333;
+      padding: 0 30px;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 20px;
+      background: transparent;
+      border: none;
+      color: #666;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab-btn:hover {
+      color: #999;
+    }
+    
+    .tab-btn.active {
+      color: #fff;
+      border-bottom-color: #fff;
+    }
+    
+    /* タブコンテンツ */
+    .tab-content {
+      display: none;
+      padding: 40px 30px;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     .form-group {
@@ -276,10 +328,6 @@
     
     .btn-group .btn {
       flex: 1;
-    }
-    
-    .records {
-      margin-top: 60px;
     }
     
     .records-header {
@@ -740,12 +788,25 @@
     
     @media (max-width: 768px) {
       .container {
-        padding: 30px 20px;
+        border: none;
+        background: transparent;
       }
       
       h1 {
         font-size: 24px;
         letter-spacing: 6px;
+        padding: 30px 20px 20px;
+      }
+      
+      .tab-navigation {
+        padding: 0 20px;
+      }
+      
+      .tab-content {
+        padding: 30px 20px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-top: none;
       }
       
       .records-grid {
@@ -785,67 +846,77 @@
   <div class="container">
     <h1>SPIRITS JOURNAL</h1>
     
-    <form id="recordForm">
-      <div class="form-group">
-        <label>Photography</label>
-        <div class="photo-upload" id="photoUpload">
-          <input type="file" id="photoInput" accept="image/*" style="display: none;">
-          <img id="preview" alt="Preview">
-          <div class="upload-text" id="uploadText">+ Add Image</div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Category</label>
-        <select id="category" required>
-          <option value="">Select category</option>
-          <option value="beer">Beer</option>
-          <option value="sake">Sake</option>
-          <option value="wine">Wine</option>
-          <option value="shochu">Shochu</option>
-          <option value="whiskey">Whiskey</option>
-          <option value="gin">Gin</option>
-        </select>
-      </div>
-      
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="sakeName" placeholder="Enter spirit name" required>
-      </div>
-      
-      <div class="form-group">
-        <label>Price (¥)</label>
-        <input type="number" id="price" placeholder="Enter price" min="0">
-      </div>
-      
-      <div class="form-group">
-        <label>Rating</label>
-        <div class="rating-container" id="ratingContainer">
-          <!-- JavaScriptで生成 -->
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Wishlist</label>
-        <div class="wishlist-toggle" id="wishlistToggle">
-          <div class="wishlist-checkbox"></div>
-          <div class="wishlist-label">Want to Try</div>
-        </div>
-      </div>
-      
-      <div class="form-group">
-        <label>Tasting Notes</label>
-        <textarea id="tasting" placeholder="Aroma, flavor, finish..."></textarea>
-      </div>
-      
-      <button type="submit" class="btn btn-primary">Save Entry</button>
-      <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
-    </form>
+    <!-- タブナビゲーション -->
+    <div class="tab-navigation">
+      <button class="tab-btn active" onclick="switchTab('post')">New Entry</button>
+      <button class="tab-btn" onclick="switchTab('archive')">Archive</button>
+    </div>
     
-    <div class="records">
+    <!-- 投稿タブ -->
+    <div id="postTab" class="tab-content active">
+      <form id="recordForm">
+        <div class="form-group">
+          <label>Photography</label>
+          <div class="photo-upload" id="photoUpload">
+            <input type="file" id="photoInput" accept="image/*" style="display: none;">
+            <img id="preview" alt="Preview">
+            <div class="upload-text" id="uploadText">+ Add Image</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Category</label>
+          <select id="category" required>
+            <option value="">Select category</option>
+            <option value="beer">Beer</option>
+            <option value="sake">Sake</option>
+            <option value="wine">Wine</option>
+            <option value="shochu">Shochu</option>
+            <option value="whiskey">Whiskey</option>
+            <option value="gin">Gin</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="sakeName" placeholder="Enter spirit name" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Price (¥)</label>
+          <input type="number" id="price" placeholder="Enter price" min="0">
+        </div>
+        
+        <div class="form-group">
+          <label>Rating</label>
+          <div class="rating-container" id="ratingContainer">
+            <!-- JavaScriptで生成 -->
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Wishlist</label>
+          <div class="wishlist-toggle" id="wishlistToggle">
+            <div class="wishlist-checkbox"></div>
+            <div class="wishlist-label">Want to Try</div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Tasting Notes</label>
+          <textarea id="tasting" placeholder="Aroma, flavor, finish..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save Entry</button>
+        <button type="button" class="btn btn-secondary" id="clearBtn">Clear</button>
+      </form>
+    </div>
+    
+    <!-- アーカイブタブ -->
+    <div id="archiveTab" class="tab-content">
       <div class="records-header">
         <div class="records-title-row">
-          <h2>Archive</h2>
+          <h2>Collection</h2>
           <div class="view-toggle">
             <button class="view-btn active" id="listViewBtn" title="List View">☰</button>
             <button class="view-btn" id="gridViewBtn" title="Grid View">⊞</button>
@@ -903,6 +974,26 @@
     let currentRatingFilter = 'all';
     let currentView = 'list';
     let isWishlist = false;
+    let currentTab = 'post';
+    
+    // タブ切り替え
+    window.switchTab = (tab) => {
+      currentTab = tab;
+      
+      // タブボタンの切り替え
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      // タブコンテンツの切り替え
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      if (tab === 'post') {
+        document.getElementById('postTab').classList.add('active');
+      } else {
+        document.getElementById('archiveTab').classList.add('active');
+        loadRecords();
+      }
+    };
     
     // IndexedDBの初期化
     const initDB = () => {
@@ -914,7 +1005,6 @@
       
       request.onsuccess = (event) => {
         db = event.target.result;
-        loadRecords();
       };
       
       request.onupgradeneeded = (event) => {
@@ -1123,7 +1213,6 @@
       request.onsuccess = () => {
         alert('Entry saved successfully');
         clearForm();
-        loadRecords();
       };
       
       request.onerror = () => {
@@ -1267,7 +1356,6 @@
         const modal = document.getElementById('modal');
         modal.style.display = 'block';
         
-        // アニメーション用に少し遅延
         setTimeout(() => {
           modal.classList.add('show');
         }, 10);
@@ -1281,7 +1369,6 @@
       const modal = document.getElementById('modal');
       modal.classList.remove('show');
       
-      // アニメーション完了後に非表示
       setTimeout(() => {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
