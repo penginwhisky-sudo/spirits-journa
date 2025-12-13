@@ -574,12 +574,14 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.95);
+      background-color: rgba(0, 0, 0, 0);
       overflow-y: auto;
+      transition: background-color 0.3s ease;
     }
     
     .modal.show {
       display: block;
+      background-color: rgba(0, 0, 0, 0.95);
     }
     
     .modal-content {
@@ -589,6 +591,14 @@
       border: 1px solid #333;
       padding: 0;
       position: relative;
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modal.show .modal-content {
+      opacity: 1;
+      transform: scale(1) translateY(0);
     }
     
     .modal-close {
@@ -604,12 +614,21 @@
       cursor: pointer;
       transition: all 0.3s;
       z-index: 10;
+      opacity: 0;
+      transform: rotate(-90deg);
+    }
+    
+    .modal.show .modal-close {
+      opacity: 1;
+      transform: rotate(0deg);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
     }
     
     .modal-close:hover {
       background: #fff;
       color: #0a0a0a;
       border-color: #fff;
+      transform: rotate(90deg);
     }
     
     .modal-image {
@@ -617,10 +636,28 @@
       max-height: 500px;
       object-fit: cover;
       filter: grayscale(100%) contrast(1.1);
+      opacity: 0;
+      transform: scale(1.1);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modal.show .modal-image {
+      opacity: 1;
+      transform: scale(1);
+      transition-delay: 0.1s;
     }
     
     .modal-info {
       padding: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .modal.show .modal-info {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.2s;
     }
     
     .modal-category {
@@ -736,6 +773,10 @@
       .grid-wishlist-badge {
         font-size: 7px;
         padding: 3px 8px;
+      }
+      
+      .modal-content {
+        margin: 20px;
       }
     }
   </style>
@@ -1223,15 +1264,28 @@
           </div>
         `;
         
-        document.getElementById('modal').classList.add('show');
+        const modal = document.getElementById('modal');
+        modal.style.display = 'block';
+        
+        // アニメーション用に少し遅延
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+        
         document.body.style.overflow = 'hidden';
       };
     };
     
     // モーダルを閉じる
     window.closeModal = () => {
-      document.getElementById('modal').classList.remove('show');
-      document.body.style.overflow = 'auto';
+      const modal = document.getElementById('modal');
+      modal.classList.remove('show');
+      
+      // アニメーション完了後に非表示
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }, 400);
     };
     
     // モーダル外をクリックで閉じる
