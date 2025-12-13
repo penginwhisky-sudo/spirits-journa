@@ -284,6 +284,7 @@
       display: flex;
       gap: 25px;
       transition: border-color 0.3s;
+      cursor: pointer;
     }
     
     .record-card:hover {
@@ -349,28 +350,6 @@
       text-overflow: ellipsis;
     }
     
-    .record-tasting.expanded {
-      display: block;
-      -webkit-line-clamp: unset;
-    }
-    
-    .read-more-btn {
-      background: transparent;
-      color: #999;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      font-size: 11px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      transition: color 0.3s;
-      margin-bottom: 12px;
-    }
-    
-    .read-more-btn:hover {
-      color: #fff;
-    }
-    
     .record-date {
       color: #555;
       font-size: 10px;
@@ -405,6 +384,142 @@
       font-size: 12px;
       letter-spacing: 2px;
       text-transform: uppercase;
+    }
+    
+    /* モーダルスタイル */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.95);
+      overflow-y: auto;
+    }
+    
+    .modal.show {
+      display: block;
+    }
+    
+    .modal-content {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      padding: 0;
+      position: relative;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: 1px solid #333;
+      color: #999;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+    
+    .modal-close:hover {
+      background: #fff;
+      color: #0a0a0a;
+      border-color: #fff;
+    }
+    
+    .modal-image {
+      width: 100%;
+      max-height: 500px;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.1);
+    }
+    
+    .modal-info {
+      padding: 40px;
+    }
+    
+    .modal-category {
+      display: inline-block;
+      padding: 4px 12px;
+      border: 1px solid #333;
+      color: #999;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    
+    .modal-name {
+      font-size: 28px;
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    
+    .modal-price {
+      color: #999;
+      font-size: 16px;
+      font-weight: 300;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+    
+    .modal-rating {
+      color: #999;
+      font-size: 16px;
+      font-weight: 300;
+      margin-bottom: 30px;
+      letter-spacing: 2px;
+    }
+    
+    .modal-tasting-label {
+      color: #999;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+    
+    .modal-tasting {
+      color: #ccc;
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      white-space: pre-wrap;
+    }
+    
+    .modal-date {
+      color: #555;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    
+    .modal-delete-btn {
+      background: transparent;
+      color: #666;
+      border: 1px solid #333;
+      padding: 12px 30px;
+      border-radius: 0;
+      cursor: pointer;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    
+    .modal-delete-btn:hover {
+      background: #fff;
+      color: #0a0a0a;
+      border-color: #fff;
     }
   </style>
 </head>
@@ -497,6 +612,14 @@
       </div>
       
       <div id="recordsList"></div>
+    </div>
+  </div>
+  
+  <!-- モーダル -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div id="modalBody"></div>
     </div>
   </div>
   
@@ -757,13 +880,6 @@
       };
     };
     
-    // テキストが省略されているかチェック
-    const isTextTruncated = (text) => {
-      if (!text) return false;
-      const lines = text.split('\n');
-      return lines.length > 2 || text.length > 100;
-    };
-    
     // 記録の表示
     const displayRecords = (records) => {
       const recordsList = document.getElementById('recordsList');
@@ -773,38 +889,75 @@
         return;
       }
       
-      recordsList.innerHTML = records.map(record => {
-        const needsReadMore = isTextTruncated(record.tasting);
-        return `
-        <div class="record-card">
+      recordsList.innerHTML = records.map(record => `
+        <div class="record-card" onclick="openModal(${record.id})">
           ${record.photo ? `<img src="${record.photo}" class="record-image" alt="${record.name}">` : ''}
           <div class="record-info">
             <div class="record-category">${record.category || 'Uncategorized'}</div>
             <div class="record-name">${record.name}</div>
             ${record.price ? `<div class="record-price">¥${record.price.toLocaleString()}</div>` : ''}
             <div class="record-rating">RATING: ${record.rating} / 10</div>
-            <div class="record-tasting" id="tasting-${record.id}">${record.tasting || 'No notes'}</div>
-            ${needsReadMore ? `<button class="read-more-btn" onclick="toggleReadMore(${record.id})">Read More</button>` : ''}
+            <div class="record-tasting">${record.tasting || 'No notes'}</div>
             <div class="record-date">${new Date(record.date).toLocaleString('ja-JP')}</div>
-            <button class="delete-btn" onclick="deleteRecord(${record.id})">Delete</button>
           </div>
         </div>
-      `;
-      }).join('');
+      `).join('');
     };
     
-    // 続きを読む/閉じる機能
-    window.toggleReadMore = (id) => {
-      const tastingElement = document.getElementById(`tasting-${id}`);
-      const button = event.target;
+    // モーダルを開く
+    window.openModal = (id) => {
+      const transaction = db.transaction(['records'], 'readonly');
+      const objectStore = transaction.objectStore('records');
+      const request = objectStore.get(id);
       
-      if (tastingElement.classList.contains('expanded')) {
-        tastingElement.classList.remove('expanded');
-        button.textContent = 'Read More';
-      } else {
-        tastingElement.classList.add('expanded');
-        button.textContent = 'Show Less';
+      request.onsuccess = (event) => {
+        const record = event.target.result;
+        const modalBody = document.getElementById('modalBody');
+        
+        modalBody.innerHTML = `
+          ${record.photo ? `<img src="${record.photo}" class="modal-image" alt="${record.name}">` : ''}
+          <div class="modal-info">
+            <div class="modal-category">${record.category || 'Uncategorized'}</div>
+            <div class="modal-name">${record.name}</div>
+            ${record.price ? `<div class="modal-price">¥${record.price.toLocaleString()}</div>` : ''}
+            <div class="modal-rating">RATING: ${record.rating} / 10</div>
+            <div class="modal-tasting-label">Tasting Notes</div>
+            <div class="modal-tasting">${record.tasting || 'No notes'}</div>
+            <div class="modal-date">${new Date(record.date).toLocaleString('ja-JP')}</div>
+            <button class="modal-delete-btn" onclick="deleteRecordFromModal(${record.id})">Delete Entry</button>
+          </div>
+        `;
+        
+        document.getElementById('modal').classList.add('show');
+        document.body.style.overflow = 'hidden';
+      };
+    };
+    
+    // モーダルを閉じる
+    window.closeModal = () => {
+      document.getElementById('modal').classList.remove('show');
+      document.body.style.overflow = 'auto';
+    };
+    
+    // モーダル外をクリックで閉じる
+    document.getElementById('modal').onclick = (e) => {
+      if (e.target.id === 'modal') {
+        closeModal();
       }
+    };
+    
+    // モーダルから削除
+    window.deleteRecordFromModal = (id) => {
+      if (!confirm('Delete this entry?')) return;
+      
+      const transaction = db.transaction(['records'], 'readwrite');
+      const objectStore = transaction.objectStore('records');
+      const request = objectStore.delete(id);
+      
+      request.onsuccess = () => {
+        closeModal();
+        loadRecords();
+      };
     };
     
     // 記録の削除
