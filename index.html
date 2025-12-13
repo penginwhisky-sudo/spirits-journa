@@ -224,13 +224,50 @@
       margin-bottom: 30px;
     }
     
+    .records-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
     .records h2 {
       color: #fff;
       font-size: 18px;
       font-weight: 300;
       letter-spacing: 4px;
       text-transform: uppercase;
-      margin-bottom: 20px;
+      margin: 0;
+    }
+    
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .view-btn {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #333;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    
+    .view-btn:hover {
+      border-color: #666;
+      color: #fff;
+    }
+    
+    .view-btn.active {
+      background: #fff;
+      color: #0a0a0a;
+      border-color: #fff;
     }
     
     .filter-section {
@@ -275,6 +312,7 @@
       border-color: #fff;
     }
     
+    /* リストビュー */
     .record-card {
       background: #0a0a0a;
       border: 1px solid #333;
@@ -357,24 +395,77 @@
       text-transform: uppercase;
     }
     
-    .delete-btn {
-      background: transparent;
-      color: #666;
-      border: 1px solid #333;
-      padding: 8px 20px;
-      border-radius: 0;
-      cursor: pointer;
-      font-size: 10px;
-      margin-top: 15px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      transition: all 0.3s;
+    /* グリッドビュー */
+    .records-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
     
-    .delete-btn:hover {
-      background: #fff;
-      color: #0a0a0a;
-      border-color: #fff;
+    .grid-card {
+      background: #0a0a0a;
+      border: 1px solid #333;
+      cursor: pointer;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+    
+    .grid-card:hover {
+      border-color: #666;
+      transform: translateY(-5px);
+    }
+    
+    .grid-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.1);
+    }
+    
+    .grid-image-placeholder {
+      width: 100%;
+      height: 250px;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      font-size: 48px;
+    }
+    
+    .grid-info {
+      padding: 20px;
+    }
+    
+    .grid-category {
+      display: inline-block;
+      padding: 3px 10px;
+      border: 1px solid #333;
+      color: #999;
+      font-size: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    
+    .grid-name {
+      font-size: 16px;
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .grid-rating {
+      color: #999;
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 2px;
     }
     
     .no-records {
@@ -384,6 +475,7 @@
       font-size: 12px;
       letter-spacing: 2px;
       text-transform: uppercase;
+      grid-column: 1 / -1;
     }
     
     /* モーダルスタイル */
@@ -521,6 +613,22 @@
       color: #0a0a0a;
       border-color: #fff;
     }
+    
+    @media (max-width: 768px) {
+      .records-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+      }
+      
+      .grid-image,
+      .grid-image-placeholder {
+        height: 180px;
+      }
+      
+      .grid-info {
+        padding: 15px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -578,7 +686,13 @@
     
     <div class="records">
       <div class="records-header">
-        <h2>Archive</h2>
+        <div class="records-title-row">
+          <h2>Archive</h2>
+          <div class="view-toggle">
+            <button class="view-btn active" id="listViewBtn" title="List View">☰</button>
+            <button class="view-btn" id="gridViewBtn" title="Grid View">⊞</button>
+          </div>
+        </div>
         
         <div class="filter-section">
           <div class="filter-label">Category</div>
@@ -629,6 +743,7 @@
     let currentPhotoData = null;
     let currentCategoryFilter = 'all';
     let currentRatingFilter = 'all';
+    let currentView = 'list'; // 'list' or 'grid'
     
     // IndexedDBの初期化
     const initDB = () => {
@@ -656,6 +771,21 @@
           }
         }
       };
+    };
+    
+    // ビュー切り替え
+    document.getElementById('listViewBtn').onclick = () => {
+      currentView = 'list';
+      document.getElementById('listViewBtn').classList.add('active');
+      document.getElementById('gridViewBtn').classList.remove('active');
+      loadRecords();
+    };
+    
+    document.getElementById('gridViewBtn').onclick = () => {
+      currentView = 'grid';
+      document.getElementById('gridViewBtn').classList.add('active');
+      document.getElementById('listViewBtn').classList.remove('active');
+      loadRecords();
     };
     
     // 評価ボタンの生成
@@ -876,12 +1006,16 @@
           records = records.filter(record => isInRatingRange(record.rating, currentRatingFilter));
         }
         
-        displayRecords(records);
+        if (currentView === 'grid') {
+          displayGridView(records);
+        } else {
+          displayListView(records);
+        }
       };
     };
     
-    // 記録の表示
-    const displayRecords = (records) => {
+    // リストビュー表示
+    const displayListView = (records) => {
       const recordsList = document.getElementById('recordsList');
       
       if (records.length === 0) {
@@ -902,6 +1036,32 @@
           </div>
         </div>
       `).join('');
+    };
+    
+    // グリッドビュー表示
+    const displayGridView = (records) => {
+      const recordsList = document.getElementById('recordsList');
+      
+      if (records.length === 0) {
+        recordsList.innerHTML = '<div class="records-grid"><div class="no-records">No entries yet</div></div>';
+        return;
+      }
+      
+      const gridHTML = records.map(record => `
+        <div class="grid-card" onclick="openModal(${record.id})">
+          ${record.photo 
+            ? `<img src="${record.photo}" class="grid-image" alt="${record.name}">` 
+            : `<div class="grid-image-placeholder">🍶</div>`
+          }
+          <div class="grid-info">
+            <div class="grid-category">${record.category || 'Uncategorized'}</div>
+            <div class="grid-name">${record.name}</div>
+            <div class="grid-rating">★ ${record.rating} / 10</div>
+          </div>
+        </div>
+      `).join('');
+      
+      recordsList.innerHTML = `<div class="records-grid">${gridHTML}</div>`;
     };
     
     // モーダルを開く
@@ -956,19 +1116,6 @@
       
       request.onsuccess = () => {
         closeModal();
-        loadRecords();
-      };
-    };
-    
-    // 記録の削除
-    window.deleteRecord = (id) => {
-      if (!confirm('Delete this entry?')) return;
-      
-      const transaction = db.transaction(['records'], 'readwrite');
-      const objectStore = transaction.objectStore('records');
-      const request = objectStore.delete(id);
-      
-      request.onsuccess = () => {
         loadRecords();
       };
     };
