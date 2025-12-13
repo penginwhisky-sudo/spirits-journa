@@ -330,6 +330,34 @@
       flex: 1;
     }
     
+    /* Settings */
+    .settings-section {
+      margin-bottom: 40px;
+    }
+    
+    .settings-section:last-child {
+      margin-bottom: 0;
+    }
+    
+    .settings-title {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #333;
+    }
+    
+    .settings-description {
+      color: #666;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+    
     .records-header {
       margin-bottom: 30px;
     }
@@ -850,6 +878,7 @@
     <div class="tab-navigation">
       <button class="tab-btn active" onclick="switchTab('post')">New Entry</button>
       <button class="tab-btn" onclick="switchTab('archive')">Archive</button>
+      <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
     </div>
     
     <!-- 投稿タブ -->
@@ -946,7 +975,18 @@
             <button class="filter-btn" data-rating="1-4">1-4</button>
           </div>
         </div>
-        
+      </div>
+      
+      <div id="recordsList"></div>
+    </div>
+    
+    <!-- 設定タブ -->
+    <div id="settingsTab" class="tab-content">
+      <div class="settings-section">
+        <div class="settings-title">Data Management</div>
+        <div class="settings-description">
+          Export your data to create a backup or transfer to another device. Import previously exported data to restore your collection.
+        </div>
         <div class="btn-group">
           <button class="btn btn-export" id="exportBtn">Export Data</button>
           <button class="btn btn-export" id="importBtn">Import Data</button>
@@ -954,7 +994,12 @@
         <input type="file" id="importInput" accept=".json" style="display: none;">
       </div>
       
-      <div id="recordsList"></div>
+      <div class="settings-section">
+        <div class="settings-title">About</div>
+        <div class="settings-description">
+          SPIRITS JOURNAL - A minimalist app for recording and tracking your spirits tasting experiences. All data is stored locally in your browser.
+        </div>
+      </div>
     </div>
   </div>
   
@@ -989,9 +1034,11 @@
       
       if (tab === 'post') {
         document.getElementById('postTab').classList.add('active');
-      } else {
+      } else if (tab === 'archive') {
         document.getElementById('archiveTab').classList.add('active');
         loadRecords();
+      } else if (tab === 'settings') {
+        document.getElementById('settingsTab').classList.add('active');
       }
     };
     
